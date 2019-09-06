@@ -85,12 +85,11 @@ class Board:
 
     def search_move(self):
         candidates = []
-        if self._jump_count == MAX_JUMP and self.pegs[CENTER].exists:
-            self.print_board()
+        if self.is_winner():
+            self.print_operations()
             return True
-        # if not (self.pegs[4].exists or self.pegs[14].exists or
-        #         self.pegs[16].exists or self.pegs[28].exists):
-        #     return False
+        if self.is_loser():
+            return False
         for peg in self.pegs:
             if not peg.exists:
                 continue
@@ -109,6 +108,15 @@ class Board:
                     return True
                 self.back_peg()
 
+    def is_winner(self):
+        return self._jump_count == MAX_JUMP and self.pegs[CENTER].exists
+
+    def is_loser(self):
+        result = True
+        for i in (4, 14, 16, 18, 28):
+            result = result or self.pegs[i].exists
+        return not result
+
     def print_board(self):
         print("  {}{}{}  ".format(self.pegs[0], self.pegs[1], self.pegs[2]))
         print("  {}{}{}  ".format(self.pegs[3], self.pegs[4], self.pegs[5]))
@@ -126,6 +134,8 @@ class Board:
                                       self.pegs[26]))
         print("  {}{}{}  ".format(self.pegs[27], self.pegs[28], self.pegs[29]))
         print("  {}{}{}  ".format(self.pegs[30], self.pegs[31], self.pegs[32]))
+
+    def print_operations(self):
         for op in self.opereation_log:
             print(op)
 
@@ -161,7 +171,7 @@ def main():
     end = time.time()
     execution_time = end - start
     hour = execution_time // (60*60)
-    minute = (execution_time - hour) // 60
+    minute = (execution_time - hour*60*60) // 60
     second = execution_time - (hour*60*60) - (minute*60)
     print("{}:{}:{}".format(hour, minute, second))
 
