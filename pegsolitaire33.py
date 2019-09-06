@@ -87,7 +87,7 @@ class Board:
         candidates = []
         if self.is_winner():
             self.print_operations()
-            return True
+            # return True
         if self.is_loser():
             return False
         for peg in self.pegs:
@@ -104,8 +104,9 @@ class Board:
         if candidates:
             for ope in sorted(candidates, key=lambda ope: ope.priority):
                 self.move_peg(ope)
-                if self.search_move():
-                    return True
+                # if self.search_move():
+                #     return True
+                self.search_move()
                 self.back_peg()
 
     def is_winner(self):
@@ -142,7 +143,7 @@ class Board:
 
 class Operation():
     groups = ((4, 14, 18, 28),
-              (7, 9, 11, 15, 17, 21, 23, 25, 31),
+              (1, 7, 9, 11, 15, 17, 21, 23, 25, 31),
               (3, 5, 13, 19, 27, 29),
               (0, 2, 6, 8, 10, 12, 20, 22, 24, 26, 30, 32),
               )
@@ -151,6 +152,9 @@ class Operation():
         self.src = src
         self.dst = dst
         self.rmv = rmv
+        # 優先度をつける
+        # 最後のペグは、4, 14, 16, 18, 28のいずれかなので、それらが
+        # 残るようなジャンプを優先する
         if rmv in self.groups[0]:
             self.priority = 3
         elif rmv in self.groups[1]:
