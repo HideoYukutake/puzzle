@@ -86,8 +86,9 @@ class Board:
     def search_move(self):
         candidates = []
         if self.is_winner():
+            print("-"*50)
             self.print_operations()
-            # return True
+            return True
         if self.is_loser():
             return False
         for peg in self.pegs:
@@ -104,9 +105,9 @@ class Board:
         if candidates:
             for ope in sorted(candidates, key=lambda ope: ope.priority):
                 self.move_peg(ope)
-                # if self.search_move():
-                #     return True
-                self.search_move()
+                if self.search_move():
+                    return True
+                # self.search_move()
                 self.back_peg()
 
     def is_winner(self):
