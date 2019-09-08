@@ -105,10 +105,15 @@ class Board:
         if candidates:
             for ope in sorted(candidates, key=lambda ope: ope.priority):
                 self.move_peg(ope)
-                if self.search_move():
-                    return True
-                # self.search_move()
+                # if self.search_move():
+                #     return True
+                self.search_move()
                 self.back_peg()
+
+    def validate(self, ops):
+        for op in ops:
+            self.move_peg(op)
+        return self.is_winner()
 
     def is_winner(self):
         return self._jump_count == MAX_JUMP and self.pegs[CENTER].exists
@@ -181,5 +186,36 @@ def main():
     print("{}:{}:{}".format(hour, minute, second))
 
 
+def validate():
+    solutions = set()
+    with open("result.txt", "r") as f:
+        b = Board()
+        ops = []
+        steps = []
+        line_no = 0
+        solve_count = 0
+        for line in f:
+            line_no += 1
+            if line.startswith("--"):
+                if b.validate(ops):
+                    t_steps = tuple(steps)
+                    if t_steps in solutions:
+                        print("重複")
+                        print(steps)
+                    solutions.add(t_steps)
+                    solve_count += 1
+                else:
+                    print("{} is bad".format(line_no-31))
+                b = Board()
+                ops = []
+                steps = []
+                continue
+            step = line.strip().replace("->", " ").replace(":del", "").split()
+            steps.append(tuple(step))
+            op = Operation(int(step[0]), int(step[1]), int(step[2]))
+            ops.append(op)
+    print(solve_count)
+
+
 if __name__ == '__main__':
-    main()
+    validate()
